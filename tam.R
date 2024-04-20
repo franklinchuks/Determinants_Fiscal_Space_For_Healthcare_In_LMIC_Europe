@@ -32,24 +32,6 @@ pub_gdp <- rbind(pub_gdp, empty_rows)
 pub_capita <- rbind(pub_capita, empty_rows)
 tot_gdp <- rbind(tot_gdp, empty_rows)
 
-####################################################
-####################################################
-####################################################
-new_2015 <- c("2015", "")
-new_2016 <- c("2016", "")
-new_2017 <- c("2017", "")
-pub_gdp <- rbind(pub_gdp, new_2015)
-pub_gdp <- rbind(pub_gdp, new_2016)
-pub_gdp <- rbind(pub_gdp, new_2017)
-pub_capita <- rbind(pub_capita, new_2015)
-pub_capita <- rbind(pub_capita, new_2016)
-pub_capita <- rbind(pub_capita, new_2017)
-tot_gdp <- rbind(tot_gdp, new_2015)
-tot_gdp <- rbind(tot_gdp, new_2016)
-tot_gdp <- rbind(tot_gdp, new_2017)
-####################################################
-####################################################
-####################################################
 
 pub_gdp$VALUE <- as.numeric(pub_gdp$VALUE)
 pub_gdp$VALUE <- na.aggregate(pub_gdp$VALUE, FUN = mean, na.rm = TRUE)
@@ -88,18 +70,27 @@ tot_gdp_avg <- mean(merged_df$tot_gdp, na.rm = TRUE)
 gdp_avg <- mean(merged_df$gdp, na.rm = TRUE)
 
 #calc the other 2 variables
-pub_total_avg <- ((tot_gdp_avg / pub_gdp_avg) - 1)
-tot_capita_avg <- tot_gdp_avg + gdp_avg
+pub_total_avg <- pub_gdp_avg * gdp_avg
+tot_capita_avg <- tot_gdp_avg * gdp_avg
+
+log_pub_capita_avg <- log(pub_capita_avg)
+log_pub_gdp_avg <- log(pub_gdp_avg)
+log_pub_total_avg <- log(pub_total_avg)
+
 
 #final table
 overall_df <- data.frame(
   country = country,
   pub_capita = pub_capita_avg,
   pub_gdp = pub_gdp_avg,
+  pub_total_avg = pub_total_avg,
+  tot_capita_avg = tot_capita_avg,
   tot_gdp = tot_gdp_avg,
-  gdp = gdp_avg
+  gdp = gdp_avg,
+  log_pub_capita_avg = log_pub_capita_avg,
+  log_pub_gdp_avg = log_pub_gdp_avg,
+  log_pub_total_avg = log_pub_total_avg
 )
 
 #output table
 overall_df
-
