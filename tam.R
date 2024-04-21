@@ -4,7 +4,7 @@ library(dplyr)
 library(zoo)
 
 rm(list = ls())
-country <- "EST"
+country <- "LUX"
 
 #load files
 pub_capita <- read.csv("pub_capita.csv")
@@ -24,36 +24,16 @@ pub_capita <- pub_capita[, c("YEAR", "VALUE")]
 pub_gdp <- pub_gdp[, c("YEAR", "VALUE")]
 tot_gdp <- tot_gdp[, c("YEAR", "VALUE")]
 
-empty_rows <- data.frame(YEAR = c("2015", "2016", "2017"), VALUE = rep(NA, 3))
-if (ncol(pub_gdp) > 2) {
-  empty_rows <- cbind(empty_rows, rep(NA, ncol(pub_gdp) - 2))
-}
-pub_gdp <- rbind(pub_gdp, empty_rows)
-pub_capita <- rbind(pub_capita, empty_rows)
-tot_gdp <- rbind(tot_gdp, empty_rows)
-
-
-pub_gdp$VALUE <- as.numeric(pub_gdp$VALUE)
-pub_gdp$VALUE <- na.aggregate(pub_gdp$VALUE, FUN = mean, na.rm = TRUE)
-
-pub_capita$VALUE <- as.numeric(pub_capita$VALUE)
-pub_capita$VALUE <- na.aggregate(pub_capita$VALUE, FUN = mean, na.rm = TRUE)
-
-tot_gdp$VALUE <- as.numeric(tot_gdp$VALUE)
-tot_gdp$VALUE <- na.aggregate(tot_gdp$VALUE, FUN = mean, na.rm = TRUE)
+pub_capita <- subset(pub_capita, YEAR >= 1995 & YEAR <= 2014)
+pub_gdp <- subset(pub_gdp, YEAR >= 1995 & YEAR <= 2014)
+tot_gdp <- subset(tot_gdp, YEAR >= 1995 & YEAR <= 2014)
+gdp <- subset(gdp, YEAR >= 1995 & YEAR <= 2014)
 
 #rename columns
 colnames(gdp)[colnames(gdp) == "VALUE"] <- "gdp"
 colnames(pub_capita)[colnames(pub_capita) == "VALUE"] <- "pub_capita"
 colnames(pub_gdp)[colnames(pub_gdp) == "VALUE"] <- "pub_gdp"
 colnames(tot_gdp)[colnames(tot_gdp) == "VALUE"] <- "tot_gdp"
-
-#resize the no. of rows
-gdp <- gdp[1:(nrow(gdp)-4), , drop = FALSE]
-gdp <- gdp[-(1:5), , drop = FALSE]
-pub_capita <- pub_capita[-(1:5), , drop = FALSE]
-pub_gdp <- pub_gdp[-(1:5), , drop = FALSE]
-tot_gdp <- tot_gdp[-(1:5), , drop = FALSE]
 
 #merge all df
 merged_df <- data.frame(
